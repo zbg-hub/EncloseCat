@@ -22,9 +22,27 @@ Map::Map(QWidget *parent) :
 			if(i%2==0)
 			{
 				temp2->x = j*40+100;
+				if((i!=0&&i!=10)&&(j!=0&&j!=10))
+				{
+					matrix[i*11+j][(i-1)*11+j-1] = 1;
+					matrix[i*11+j][(i-1)*11+j] = 1;
+					matrix[i*11+j][i*11+j-1] = 1;
+					matrix[i*11+j][i*11+j+1] = 1;
+					matrix[i*11+j][(i+1)*11+j-1] = 1;
+					matrix[i*11+j][(i+1)*11+j] = 1;
+				}
 			}
 			else {
 				temp2->x = j*40+120;
+				if((i!=0&&i!=10)&&(j!=0&&j!=10))
+				{
+					matrix[i*11+j][(i-1)*11+j] = 1;
+					matrix[i*11+j][(i-1)*11+j+1] = 1;
+					matrix[i*11+j][i*11+j-1] = 1;
+					matrix[i*11+j][i*11+j+1] = 1;
+					matrix[i*11+j][(i+1)*11+j] = 1;
+					matrix[i*11+j][(i+1)*11+j+1] = 1;
+				}
 			}
 			temp2->y = i*40+50;
 			temp2->SeqX = i;
@@ -36,6 +54,46 @@ Map::Map(QWidget *parent) :
 			MainMap[i].push_back(temp2);
 		}
 	}
+	for(int i=1;i<10;i++)
+	{
+		matrix[i][i+10]=1;
+		matrix[i][i+11]=1;
+		matrix[i][i-1]=1;
+		matrix[i][i+1]=1;
+		matrix[110+i][98+i]=1;
+		matrix[110+i][99+i]=1;
+		matrix[110+i][110+i-1]=1;
+		matrix[110+i][110+i+1]=1;
+		if(i%2==0)
+		{
+			matrix[11*i][11*i-11]=1;
+			matrix[11*i][11*i+11]=1;
+			matrix[11*i+10][11*i-1]=1;
+			matrix[11*i+10][11*1+21]=1;
+			matrix[11*i+10][11*i-2]=1;
+			matrix[11*i+10][11*1+20]=1;
+			matrix[11*i+10][11*i+9]=1;
+		}
+		else {
+			matrix[11*i][11*i-11]=1;
+			matrix[11*i][11*i+11]=1;
+			matrix[11*i][11*i+1]=1;
+			matrix[11*i][11*i-10]=1;
+			matrix[11*i][11*i+12]=1;
+			matrix[11*i+10][11*i-1]=1;
+			matrix[11*i+10][11*1+21]=1;
+		}
+	}
+	matrix[0][1]=1;
+	matrix[0][11]=1;
+	matrix[10][9]=1;
+	matrix[10][21]=1;
+	matrix[10][20]=1;
+	matrix[110][99]=1;
+	matrix[110][111]=1;
+	matrix[120][119]=1;
+	matrix[120][109]=1;
+	matrix[120][108]=1;
 	//qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 	qsrand((quint32)time(0));
 	for(int i = 0;i<8;i++)
@@ -62,7 +120,6 @@ Map::Map(QWidget *parent) :
 		{
 			connect(MainMap[i][j], SIGNAL(send_cat_move(int,int)), this, SLOT(receive_cat_move(int,int)));
 		}
-
 	}
 
 

@@ -31,6 +31,7 @@ private:
 	QLabel *Cat = new QLabel;
 	int CatX =5;
 	int CatY =5;
+	int matrix[121][121]={0};
 };
 
 #endif // MAP_H
