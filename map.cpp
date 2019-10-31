@@ -183,6 +183,8 @@ void Map::on_pushButton_clicked()
 			matrix[i][seq]=0;
 		}
 	}
+	CatX=5;
+	CatY=5;
 	Cat->move(MainMap[5][5]->x,MainMap[5][5]->y);
 }
 
