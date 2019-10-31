@@ -18,6 +18,10 @@ public:
 	explicit Map(QWidget *parent = nullptr);
 	~Map();
 	int generateRandomNumber(int n);
+	bool connectivity(int x1,int y1,int x2,int y2);
+	void MatrixInit();
+	bool Success();
+	bool Fail();
 
 public:
 	vector<vector<Button*>> MainMap;
