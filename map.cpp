@@ -190,43 +190,6 @@ void Map::on_pushButton_clicked()
 
 void Map::receive_cat_move(int x,int y)
 {
-	int direct = generateRandomNumber(6);
-	int temX=CatX;
-	int temY=CatY;
-	int temp = CatX%2;
-	cout<<"dir="<<direct<<endl;
-	switch (direct) {
-	case 0:
-		CatX--;
-		CatY = CatY+temp-1;
-		break;
-	case 1:
-		CatX--;
-		CatY = CatY+temp;
-		break;
-	case 2:
-		CatY--;
-		break;
-	case 3:
-		CatY++;
-		break;
-	case 4:
-		CatX++;
-		CatY = CatY+temp-1;
-		break;
-	case 5:
-		CatX++;
-		CatY = CatY+temp;
-		break;
-	}
-	if(MainMap[CatX][CatY]->enable==false||(CatX==x&&CatY==y))
-	{
-		CatX = temX;
-		CatY = temY;
-		receive_cat_move(x,y);
-		return;
-	}
-	Cat->move(MainMap[CatX][CatY]->x,MainMap[CatX][CatY]->y);
 	int seq = x*11+y;
 	for(int i = 0;i<121;i++)
 	{
@@ -260,6 +223,117 @@ void Map::receive_cat_move(int x,int y)
 			}
 		}
 	}
+	else {
+		ShortestPathMove();
+		if(Success())
+		{
+			QMessageBox* box = new QMessageBox;
+			box->setWindowTitle(QString::fromUtf8("提示"));
+			box->setText(QString::fromUtf8("你赢了"));
+			box->show();
+			for(vector<vector<Button*>>::iterator i=MainMap.begin();i<MainMap.end();i++)
+			{
+				for(vector<Button*>::iterator j=i->begin();j<i->end();j++)
+				{
+					(*j)->setEnabled(false);
+				}
+			}
+		}
+		else if (Fail()) {
+			QMessageBox* box = new QMessageBox;
+			box->setWindowTitle(QString::fromUtf8("提示"));
+			box->setText(QString::fromUtf8("你输了"));
+			box->show();
+			for(vector<vector<Button*>>::iterator i=MainMap.begin();i<MainMap.end();i++)
+			{
+				for(vector<Button*>::iterator j=i->begin();j<i->end();j++)
+				{
+					(*j)->setEnabled(false);
+				}
+			}
+		}
+	}
+}
+
+void Map::RandomMove(int x,int y)
+{
+	int direct = generateRandomNumber(6);
+	int temX=CatX;
+	int temY=CatY;
+	int temp = CatX%2;
+	cout<<"dir="<<direct<<endl;
+	switch (direct) {
+	case 0:
+		CatX--;
+		CatY = CatY+temp-1;
+		break;
+	case 1:
+		CatX--;
+		CatY = CatY+temp;
+		break;
+	case 2:
+		CatY--;
+		break;
+	case 3:
+		CatY++;
+		break;
+	case 4:
+		CatX++;
+		CatY = CatY+temp-1;
+		break;
+	case 5:
+		CatX++;
+		CatY = CatY+temp;
+		break;
+	}
+	if(MainMap[CatX][CatY]->enable==false||(CatX==x&&CatY==y))
+	{
+		CatX = temX;
+		CatY = temY;
+		RandomMove(x,y);
+		return;
+	}
+	Cat->move(MainMap[CatX][CatY]->x,MainMap[CatX][CatY]->y);
+}
+
+void Map::ShortestPathMove()
+{
+	int SeqCat = CatX*11+CatY;
+	vector<int> visit={};
+	queue<int> q;
+	queue<int> root;
+	q.push(SeqCat);
+	visit.push_back(SeqCat);
+	while(!q.empty())
+	{
+		if(JudgeEdge(q.front()))
+		{
+			CatY=root.front()%11;
+			CatX=(root.front()-CatY)/11;
+			Cat->move(MainMap[CatX][CatY]->x,MainMap[CatX][CatY]->y);
+			return;
+		}
+		else {
+			for(int i =0;i<121;i++)
+			{
+				if(matrix[q.front()][i]==1&&std::find(visit.begin(),visit.end(),i)==visit.end())
+				{
+					q.push(i);
+					visit.push_back(i);
+					if(q.front()==SeqCat&&i!=q.front())
+					{
+						root.push(i);
+					}
+					else {
+						root.push(root.front());
+					}
+				}
+			}
+			if(q.front()!=SeqCat)
+				root.pop();
+			q.pop();
+		}
+	}
 }
 
 bool Map::connectivity(int x1,int y1,int x2,int y2)
@@ -288,6 +362,19 @@ bool Map::connectivity(int x1,int y1,int x2,int y2)
 			q.pop();
 		}
 	}
+	return false;
+}
+
+bool Map::JudgeEdge(int Seq)
+{
+	if(Seq>=0&&Seq<=11)
+		return true;
+	if(Seq>=110&&Seq<=120)
+		return true;
+	if(Seq%11==0)
+		return true;
+	if((Seq+1)%11==0)
+		return true;
 	return false;
 }
 
@@ -370,22 +457,18 @@ bool Map::Success()
 	{
 		if(connectivity(CatX,CatY,0,i))
 		{
-			cout<<0<<" "<<i<<endl;
 			return false;
 		}
 		if(connectivity(CatX,CatY,i,0))
 		{
-			cout<<i<<" "<<0<<endl;
 			return false;
 		}
 		if(connectivity(CatX,CatY,i,10))
 		{
-			cout<<i<<" "<<10<<endl;
 			return false;
 		}
 		if(connectivity(CatX,CatY,10,i))
 		{
-			cout<<10<<" "<<i<<endl;
 			return false;
 		}
 	}

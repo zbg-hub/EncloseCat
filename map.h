@@ -22,6 +22,9 @@ public:
 	void MatrixInit();
 	bool Success();
 	bool Fail();
+	void RandomMove(int x,int y);
+	void ShortestPathMove();
+	bool JudgeEdge(int Seq);
 
 public:
 	vector<vector<Button*>> MainMap;
