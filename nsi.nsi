@@ -45,7 +45,7 @@ RequestExecutionLevel admin
 Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite try
-  File /r /x *.ini /x *.xml /x *.o "build\*"
+  File /r /x *.ini /x *.xml /x *.o "build\release\*"
 
 SectionEnd
 
